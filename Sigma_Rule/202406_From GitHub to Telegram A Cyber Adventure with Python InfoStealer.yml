@@ -1,0 +1,32 @@
+title: Python InfoStealer Malware
+id: 9d5e352d-50f2-4eeb-a63d-3f3658b3dc62
+status: test
+description: Detect Generic Python InfoStealer Malware Processes Calling CMD To Check Version, List Process, and Kill Web Browser Processes.
+references: https://link.medium.com/Akgh9vFRLKb
+author: FatzQatz [https://x.com/FatzQatz]
+date: 2024/06/27
+modified: 2024/06/27
+logsource:
+   category: process_creation
+   product: windows
+detection: 
+   selection_python:
+      Image|endswith: '\python.exe'
+      CommandLine|contains: 'c:\users\Public\Document\Lib\sim.py'
+   selection_proc:
+      ParentImage|endswith: '\python.exe'
+      Image|endswith: '\cmd.exe'
+   selection_commandline_ver: 
+      CommandLine|contains: 'ver'
+   selection_commandline_list: 
+      CommandLine|contains: 'tasklist'
+   selection_commandline_kill: 
+      CommandLine|contains:
+         - 'taskkill /f /im chrome.exe'
+         - 'taskkill /f /im msedge.exe'
+         - 'taskkill /f /im brave.exe'
+         - 'taskkill /f /im opera.exe'
+         - 'taskkill /f /im firefox.exe'
+   condition: selection_python or (selection_proc and all of selection_commandline*) 
+falsepositives: Unknown
+level: medium
