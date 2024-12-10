@@ -1,0 +1,21 @@
+title: Suspicious PE File Dropped by CAB Loader Utilizing CMD
+id: 88b75b44-0212-440f-9150-f56f0bdc6282
+status: test
+description: Detects the creation of suspicious PE files dropped by a CAB Loader leveraging extrac32.exe and the embedded CMD commands.
+references: https://link.medium.com/g4RTGBrxdPb 
+author: FatzQatz [https://x.com/FatzQatz]
+date: 2024/12/10
+modified: 2024/12/10
+logsource:
+   category: process_creation
+   product: windows
+detection: 
+   selection:
+      Image|endswith: '\extrac32.exe'
+      CommandLine|contains|all:
+         - ' /y '
+         - '.cmd'
+      ParentImage|endswith: '\cmd.exe'
+   condition: selection
+falsepositives: Unknown
+level: medium
