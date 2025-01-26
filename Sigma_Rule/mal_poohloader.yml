@@ -1,0 +1,30 @@
+title:  PoohLoader - Mustang Panda
+id: 0640db90-7432-4c0f-8961-b8c60457a2d3
+status: test
+description: Detect PoohLoader process. Please note that I intentionally made this rule to be heuristic, and Mustang Panda usually change the DLL so it is a good idea to change the DLL name in the Selection to match with your situation.
+references:
+    - https://x.com/FatzQatz
+author: FatzQatz (https://x.com/FatzQatz)
+date: 2025/01/26
+modified: 2025/01/26
+logsource:
+   category: process_creation
+   product: windows
+detection: 
+   selection_if_av_exist:
+      ParentImage|endswith: '\regsvr32.exe'
+      ParentCommandLine|contains: 'EACore.dll'
+      Image|endswith: '\waitfor.exe'
+      CommandLine|contains: 'Event'
+   selection_if_av_not_exist:
+      ParentCommandLine|contains: 'ProgramData\session'
+      Image|endswith: '\waitfor.exe'
+      CommandLine|contains: 'Event'
+   parent_condition:
+      ParentImage|endswith: 
+          - '\cmd.exe'
+          - '\powershell.exe'
+          - '\msiexec.exe'
+   condition: (selection_if_av_exist or selection_if_av_not_exist) and not parent_condition
+falsepositives: Unknown
+level: medium
