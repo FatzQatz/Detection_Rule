@@ -1,0 +1,22 @@
+title:  TA2727 Javascript TTP
+id: aac4d013-ec38-4150-a9fa-e739564c3ecd
+status: test
+description: Detect suspicious wscript process spawned powershell with AES decryption and byte transform switch.
+references:
+    - https://medium.com/@FatzQatz/deconstructing-the-malicious-javascript-file-used-by-ta2727-c3fb3d3ce75f
+author: FatzQatz (https://x.com/FatzQatz)
+date: 2025/02/24
+modified: 2025/02/24
+logsource:
+   category: process_creation
+   product: windows
+detection: 
+   selection:
+      ParentImage|endswith: '\wscript.exe'
+      Image|endswith: '\powershell.exe'
+      CommandLine|contains|all: 
+          - 'CreateDecryptor'
+          - '[byte[]]::new(16)).TransformFinalBlock'
+   condition: selection
+falsepositives: Unknown
+level: medium
